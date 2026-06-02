@@ -41,6 +41,8 @@
   .btn-gdlogin:hover{opacity:.85;}
   .btn-gdlogout{background:transparent;border:none;color:var(--text3);font-size:.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;padding:0;text-decoration:underline;}
   .btn-gdlogout:hover{color:var(--red);}
+  .btn-gdrefresh{background:transparent;border:1px solid rgba(107,163,224,.35);color:var(--blue);border-radius:var(--radius);padding:.35rem .8rem;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;cursor:pointer;transition:background .2s;}
+  .btn-gdrefresh:hover{background:var(--blue-bg);}
 
   .setup-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.75rem;}
   .setup-card h2{font-size:.75rem;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem;}
@@ -116,6 +118,7 @@
     <div class="gd-dot" id="gd-dot"></div>
     <span class="gd-label" id="gd-label">Conectando ao Google Drive...</span>
     <button class="btn-gdlogin" id="gd-btn-login" onclick="gdLogin()" style="display:none">Entrar com Google</button>
+    <button class="btn-gdrefresh" id="gd-btn-refresh" onclick="gdRefresh()" style="display:none" title="Buscar dados mais recentes">↻ Atualizar</button>
     <button class="btn-gdlogout" id="gd-btn-logout" onclick="gdLogout()" style="display:none">Sair</button>
   </div>
 
@@ -216,11 +219,12 @@ let diasUteisArr = [], inputs = {};
 const LS_KEY = 'vr-v4';
 
 // ── UI helpers ──
-function gdSetStatus(dot, msg, showLogin=false, showLogout=false) {
+function gdSetStatus(dot, msg, showLogin=false, showLogout=false, showRefresh=false) {
   document.getElementById('gd-dot').className = 'gd-dot' + (dot ? ' '+dot : '');
   document.getElementById('gd-label').innerHTML = msg;
   document.getElementById('gd-btn-login').style.display = showLogin ? 'inline-block' : 'none';
   document.getElementById('gd-btn-logout').style.display = showLogout ? 'inline-block' : 'none';
+  document.getElementById('gd-btn-refresh').style.display = showRefresh ? 'inline-block' : 'none';
 }
 function showSave(msg, err=false) {
   const el = document.getElementById('save-indicator');
@@ -240,11 +244,17 @@ function gdLogin() {
       gdToken = resp.access_token;
       localStorage.setItem('gd_token', gdToken);
       const info = await fetchUserInfo();
-      gdSetStatus('connected', `Google Drive conectado &mdash; <strong>${info}</strong>`, false, true);
+      gdSetStatus('connected', `Google Drive conectado &mdash; <strong>${info}</strong>`, false, true, true);
       await carregarGDrive();
     }
   });
   client.requestAccessToken();
+}
+
+function gdRefresh() {
+  if (!gdToken) return;
+  gdSetStatus("syncing", document.getElementById("gd-label").innerHTML);
+  carregarGDrive();
 }
 
 function gdLogout() {
@@ -326,7 +336,7 @@ async function carregarGDrive() {
       salvarLocal(dados);
       restaurarEstado(dados);
       const info = document.getElementById('gd-label').innerHTML;
-      gdSetStatus('connected', info, false, true);
+      gdSetStatus('connected', info, false, true, true);
     } else {
       const local = carregarLocal();
       if (local) { restaurarEstado(local); await agendarSalvarGD(); }
@@ -348,7 +358,7 @@ function agendarSalvarGD() {
     try {
       await gdSaveFile(dados);
       const lbl = document.getElementById('gd-label').innerHTML;
-      gdSetStatus('connected', lbl.includes('Salvando') ? lbl.replace('Salvando...','Google Drive conectado') : lbl, false, true);
+      gdSetStatus('connected', lbl.includes('Salvando') ? lbl.replace('Salvando...','Google Drive conectado') : lbl, false, true, true);
       showSave('✓ sincronizado com Google Drive');
     } catch(e) {
       gdSetStatus('error', 'Erro ao salvar no Drive. Dados salvos localmente.', false, true);
