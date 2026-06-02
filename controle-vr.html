@@ -281,7 +281,7 @@ async function tryRestoreToken() {
     if (!r.ok) throw new Error('expired');
     const d = await r.json();
     gdToken = saved;
-    gdSetStatus('connected', `Google Drive conectado &mdash; <strong>${d.name||d.email||''}</strong>`, false, true);
+    gdSetStatus('connected', `Google Drive conectado &mdash; <strong>${d.name||d.email||''}</strong>`, false, true, true);
     await carregarGDrive();
   } catch {
     localStorage.removeItem('gd_token');
@@ -340,7 +340,7 @@ async function carregarGDrive() {
     } else {
       const local = carregarLocal();
       if (local) { restaurarEstado(local); await agendarSalvarGD(); }
-      else gdSetStatus('connected', document.getElementById('gd-label').innerHTML, false, true);
+      else gdSetStatus('connected', document.getElementById('gd-label').innerHTML, false, true, true);
     }
   } catch(e) {
     gdSetStatus('error', 'Erro ao carregar. Usando dados locais.', false, true);
