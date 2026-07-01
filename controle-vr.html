@@ -93,6 +93,16 @@
   .day-num{font-size:.8rem;font-weight:500;color:var(--text);}
   .day-sem{font-size:.66rem;color:var(--text3);}
   .day-card.holiday .day-sem{color:var(--amber);}
+  .day-card.removed{display:none;}
+  .btn-remove-day{position:absolute;top:4px;right:4px;background:transparent;border:none;color:var(--text3);font-size:.75rem;cursor:pointer;padding:0 2px;line-height:1;border-radius:4px;transition:color .2s,background .2s;}
+  .btn-remove-day:hover{color:var(--red);background:var(--red-bg);}
+  .day-card{position:relative;}
+  .removed-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.75rem 1rem;margin-bottom:1.25rem;display:none;}
+  .removed-panel h3{font-size:.72rem;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem;}
+  .removed-tags{display:flex;flex-wrap:wrap;gap:.4rem;}
+  .removed-tag{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:.25rem .6rem;font-size:.75rem;color:var(--text2);cursor:pointer;transition:background .2s,color .2s;display:flex;align-items:center;gap:.35rem;}
+  .removed-tag:hover{background:var(--green-bg);border-color:rgba(93,202,145,.3);color:var(--green);}
+  .removed-tag .restore-icon{font-size:.7rem;}
   .day-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Mono',monospace;font-size:.8rem;padding:4px 5px;text-align:right;outline:none;transition:border-color .2s;}
   .day-input:focus{border-color:var(--blue);}
   .day-diff{font-size:.66rem;text-align:right;margin-top:3px;height:12px;font-family:'DM Mono',monospace;}
@@ -196,8 +206,12 @@
       </div>
     </div>
     <div class="days-title">Registre seus gastos diários</div>
+    <div class="removed-panel" id="removed-panel">
+      <h3>↩ Dias removidos — toque para restaurar</h3>
+      <div class="removed-tags" id="removed-tags"></div>
+    </div>
     <div class="days-grid" id="days-grid"></div>
-    <div class="hint">ℹ️ Deixe em branco os dias que ainda não aconteceram.</div>
+    <div class="hint">ℹ️ Deixe em branco os dias que ainda não aconteceram. Toque no ✕ para remover um dia (feriado, emenda, etc).</div>
   </div>
 
 </div>
@@ -375,7 +389,7 @@ function fallbackLocal() { const d=carregarLocal(); if(d) restaurarEstado(d); }
 function coletarDados() {
   const g={};
   diasUteisArr.forEach(i=>{ if(!i.feriado&&inputs[i.d]&&inputs[i.d].value.trim()!='') g[i.d]=inputs[i.d].value; });
-  return { mes:parseInt(document.getElementById('sel-mes').value), ano:parseInt(document.getElementById('inp-ano').value), saldo:SALDO_INICIAL, vrDia:VR_DIA, gastos:g };
+  return { mes:parseInt(document.getElementById('sel-mes').value), ano:parseInt(document.getElementById('inp-ano').value), saldo:SALDO_INICIAL, vrDia:VR_DIA, gastos:g, removed:[...removedDays] };
 }
 
 // ── Feriados ──
@@ -389,14 +403,52 @@ const fmt=v=>'R$ '+Math.abs(v).toFixed(2).replace('.',',');
 const fmtS=v=>(v<0?'- ':'')+' R$ '+Math.abs(v).toFixed(2).replace('.',',');
 
 // ── Estado dos cards ──
+let removedDays = new Set();
+
 function getDayState(ano,mes,dia){const hoje=new Date(),dc=new Date(ano,mes,dia),hn=new Date(hoje.getFullYear(),hoje.getMonth(),hoje.getDate());if(dc.getTime()===hn.getTime())return'today';return dc<hn?'past':'future';}
 function atualizarCard(card,inp,ano,mes,dia){if(!card||!inp)return;const s=getDayState(ano,mes,dia),p=inp.value.trim()!=='';card.classList.remove('past-empty','past-filled','today');if(s==='today')card.classList.add('today');else if(s==='past')card.classList.add(p?'past-filled':'past-empty');}
+
+function removerDia(dia, mes, ano) {
+  removedDays.add(dia);
+  const card = document.getElementById(`card-${dia}`);
+  if (card) card.style.display = 'none';
+  if (inputs[dia]) { inputs[dia].value = ''; }
+  atualizarRemovedPanel(mes, ano);
+  calcular(true);
+}
+
+function restaurarDia(dia, mes, ano) {
+  removedDays.delete(dia);
+  const card = document.getElementById(`card-${dia}`);
+  if (card) card.style.display = '';
+  atualizarRemovedPanel(mes, ano);
+  calcular(true);
+}
+
+function atualizarRemovedPanel(mes, ano) {
+  const panel = document.getElementById('removed-panel');
+  const tags = document.getElementById('removed-tags');
+  tags.innerHTML = '';
+  if (removedDays.size === 0) { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+  const diasOrdenados = [...removedDays].sort((a,b)=>a-b);
+  diasOrdenados.forEach(dia => {
+    const info = diasUteisArr.find(d => d.d === dia);
+    if (!info) return;
+    const tag = document.createElement('div');
+    tag.className = 'removed-tag';
+    tag.title = 'Clique para restaurar';
+    tag.innerHTML = `<span class="restore-icon">↩</span> ${dia}/${(mes+1).toString().padStart(2,'0')} ${info.nomeSem}`;
+    tag.onclick = () => restaurarDia(dia, mes, ano);
+    tags.appendChild(tag);
+  });
+}
 
 // ── Calcular ──
 function calcular(salvar=true){
   let totalGasto=0,diasReg=0,eco=0;
   diasUteisArr.forEach(info=>{
-    if(info.feriado)return;
+    if(info.feriado||removedDays.has(info.d))return;
     const inp=inputs[info.d];if(!inp)return;
     const val=parseFloat(inp.value),el=document.getElementById(`diff-${info.d}`);
     if(!isNaN(val)&&inp.value.trim()!=''){
@@ -407,7 +459,9 @@ function calcular(salvar=true){
       else{el.style.color='var(--text3)';el.textContent='exato';}}
     } else if(el) el.textContent='';
   });
-  const tu=diasUteisArr.filter(d=>!d.feriado).length,dr=tu-diasReg,sr=SALDO_INICIAL-totalGasto,pd=dr>0?sr/dr:0,pct=tu>0?Math.min(100,Math.round((diasReg/tu)*100)):0;
+  const tu=diasUteisArr.filter(d=>!d.feriado&&!removedDays.has(d.d)).length;
+  VR_TOTAL_IDEAL=tu*VR_DIA;
+  const dr=tu-diasReg,sr=SALDO_INICIAL-totalGasto,pd=dr>0?sr/dr:0,pct=tu>0?Math.min(100,Math.round((diasReg/tu)*100)):0;
   document.getElementById('m-gasto').textContent=fmt(totalGasto);
   document.getElementById('m-gasto-sub').textContent=diasReg+' dia'+(diasReg!==1?'s':'')+' registrado'+(diasReg!==1?'s':'');
   const elR=document.getElementById('m-restante');elR.textContent=fmt(sr);elR.className='metric-value '+(sr>=0?'ok':'danger');
@@ -425,9 +479,10 @@ function calcular(salvar=true){
 }
 
 // ── Construir grade ──
-function construirGrade(mes,ano,gastos={}){
+function construirGrade(mes,ano,gastos={},removed=[]){
   diasUteisArr=getDias(ano,mes);inputs={};
-  const tu=diasUteisArr.filter(d=>!d.feriado).length;
+  removedDays=new Set(removed);
+  const tu=diasUteisArr.filter(d=>!d.feriado&&!removedDays.has(d.d)).length;
   VR_TOTAL_IDEAL=tu*VR_DIA;
   document.getElementById('m-saldo').textContent=fmt(SALDO_INICIAL);
   document.getElementById('m-saldo-sub').textContent=tu+' dias úteis no mês';
@@ -440,7 +495,8 @@ function construirGrade(mes,ano,gastos={}){
     const card=document.createElement('div');
     card.className='day-card'+(info.feriado?' holiday':'');
     card.id=`card-${info.d}`;
-    card.innerHTML=`<div class="day-header"><span class="day-num">${info.d}/${(mes+1).toString().padStart(2,'0')}</span><span class="day-sem">${info.feriado?'Feriado':info.nomeSem}</span></div>${info.feriado?`<div class="day-feriado">${info.feriado}</div>`:`<input class="day-input" type="number" min="0" step="0.01" placeholder="${VR_DIA.toFixed(2).replace('.',',')}" id="dia-${info.d}" />`}${!info.feriado?`<div class="day-diff" id="diff-${info.d}"></div>`:''}`;
+    if(removedDays.has(info.d)) card.style.display='none';
+    card.innerHTML=`<div class="day-header"><span class="day-num">${info.d}/${(mes+1).toString().padStart(2,'0')}</span><span class="day-sem">${info.feriado?'Feriado':info.nomeSem}</span>${!info.feriado?`<button class="btn-remove-day" title="Remover este dia" onclick="removerDia(${info.d},${mes},${ano})">✕</button>`:''}</div>${info.feriado?`<div class="day-feriado">${info.feriado}</div>`:`<input class="day-input" type="number" min="0" step="0.01" placeholder="${VR_DIA.toFixed(2).replace('.',',')}" id="dia-${info.d}" />`}${!info.feriado?`<div class="day-diff" id="diff-${info.d}"></div>`:''}`;
     grid.appendChild(card);
     if(!info.feriado){
       const inp=card.querySelector(`#dia-${info.d}`);
@@ -450,6 +506,7 @@ function construirGrade(mes,ano,gastos={}){
       inp.addEventListener('input',()=>{atualizarCard(card,inp,ano,mes,info.d);calcular(true);});
     }
   });
+  atualizarRemovedPanel(mes,ano);
   document.getElementById('main-content').style.display='block';
   calcular(false);
 }
@@ -460,7 +517,7 @@ function restaurarEstado(e){
   document.getElementById('inp-saldo').value=e.saldo;
   document.getElementById('inp-vrdia').value=e.vrDia;
   SALDO_INICIAL=e.saldo;VR_DIA=e.vrDia;
-  construirGrade(e.mes,e.ano,e.gastos||{});
+  construirGrade(e.mes,e.ano,e.gastos||{},e.removed||[]);
 }
 
 function aplicar(){
