@@ -496,7 +496,7 @@ function construirGrade(mes,ano,gastos={},removed=[]){
     card.className='day-card'+(info.feriado?' holiday':'');
     card.id=`card-${info.d}`;
     if(removedDays.has(info.d)) card.style.display='none';
-    card.innerHTML=`<div class="day-header"><span class="day-num">${info.d}/${(mes+1).toString().padStart(2,'0')}</span><span class="day-sem">${info.feriado?'Feriado':info.nomeSem}</span>${!info.feriado?`<button class="btn-remove-day" title="Remover este dia" onclick="removerDia(${info.d},${mes},${ano})">✕</button>`:''}</div>${info.feriado?`<div class="day-feriado">${info.feriado}</div>`:`<input class="day-input" type="number" min="0" step="0.01" placeholder="${VR_DIA.toFixed(2).replace('.',',')}" id="dia-${info.d}" />`}${!info.feriado?`<div class="day-diff" id="diff-${info.d}"></div>`:''}`;
+    card.innerHTML=`<div class="day-header"><span class="day-num">${info.d}/${(mes+1).toString().padStart(2,'0')}</span><span class="day-sem">${info.feriado?'Feriado':info.nomeSem}</span>${!info.feriado?`<button class="btn-remove-day" title="Remover este dia" onclick="removerDia(${info.d},${mes},${ano})">✕</button>`:''}</div>${info.feriado?`<div class="day-feriado">${info.feriado}</div>`:`<input class="day-input" type="number" inputmode="decimal" min="0" step="0.01" placeholder="${VR_DIA.toFixed(2).replace('.',',')}" id="dia-${info.d}" />`}${!info.feriado?`<div class="day-diff" id="diff-${info.d}"></div>`:''}`;
     grid.appendChild(card);
     if(!info.feriado){
       const inp=card.querySelector(`#dia-${info.d}`);
