@@ -16,7 +16,7 @@
     --radius:10px;--radius-lg:14px;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;padding:1.5rem 1rem 4rem;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;padding:1.5rem 1rem 6.5rem;-webkit-text-size-adjust:100%;}
   .container{max-width:780px;margin:0 auto;}
 
   .header{margin-bottom:1.75rem;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.75rem;}
@@ -48,7 +48,7 @@
   .setup-card h2{font-size:.75rem;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem;}
   .setup-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.85rem;align-items:end;}
   .field label{display:block;font-size:.76rem;color:var(--text2);margin-bottom:.35rem;}
-  .field input,.field select{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:'DM Mono',monospace;font-size:.9rem;padding:.55rem .7rem;outline:none;transition:border-color .2s;appearance:none;}
+  .field input,.field select{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:'DM Mono',monospace;font-size:.9rem;padding:.55rem .7rem;outline:none;transition:border-color .2s;-webkit-appearance:none;-moz-appearance:none;appearance:none;}
   .field input:focus,.field select:focus{border-color:var(--blue);}
   .btn-apply{background:var(--blue);color:#07172a;border:none;border-radius:var(--radius);padding:.58rem 1.1rem;font-family:'DM Sans',sans-serif;font-size:.86rem;font-weight:600;cursor:pointer;width:100%;transition:opacity .2s;}
   .btn-apply:hover{opacity:.85;}
@@ -81,14 +81,18 @@
   .day-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:7px;transition:border-color .2s;}
   .day-card:hover:not(.holiday){border-color:var(--border2);}
   .day-card.holiday{background:var(--amber-bg);border-color:rgba(232,184,75,.25);}
+  .day-card.weekend{background:transparent;border-style:dashed;border-color:var(--border2);}
+  .day-card.weekend .day-sem{color:var(--text3);}
   .day-card.past-empty{background:rgba(224,112,112,0.08);border-color:rgba(224,112,112,0.35);}
   .day-card.past-empty .day-num{color:var(--red);}
   .day-card.past-empty .day-sem{color:rgba(224,112,112,0.6);}
   .day-card.past-filled{background:rgba(93,202,145,0.06);border-color:rgba(93,202,145,0.25);}
   .day-card.past-filled .day-num{color:var(--green);}
-  .day-card.today{border-color:var(--blue);border-width:1.5px;}
+  .day-card.today{border-color:var(--blue);border-width:1.5px;border-style:solid;}
   .day-card.today .day-num{color:var(--blue);}
   .day-card.today .day-sem{color:var(--blue);opacity:.7;}
+  .day-card.flash{animation:flash 1.2s ease-out;}
+  @keyframes flash{0%{box-shadow:0 0 0 3px var(--green);}100%{box-shadow:0 0 0 0 rgba(93,202,145,0);}}
   .day-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
   .day-num{font-size:.8rem;font-weight:500;color:var(--text);}
   .day-sem{font-size:.66rem;color:var(--text3);}
@@ -103,12 +107,37 @@
   .removed-tag{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:.25rem .6rem;font-size:.75rem;color:var(--text2);cursor:pointer;transition:background .2s,color .2s;display:flex;align-items:center;gap:.35rem;}
   .removed-tag:hover{background:var(--green-bg);border-color:rgba(93,202,145,.3);color:var(--green);}
   .removed-tag .restore-icon{font-size:.7rem;}
-  .day-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Mono',monospace;font-size:.8rem;padding:4px 5px;text-align:right;outline:none;transition:border-color .2s;}
+  .day-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Mono',monospace;font-size:.8rem;padding:4px 5px;text-align:right;outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none;}
   .day-input:focus{border-color:var(--blue);}
   .day-diff{font-size:.66rem;text-align:right;margin-top:3px;height:12px;font-family:'DM Mono',monospace;}
-  .day-feriado{font-size:.66rem;color:var(--amber);text-align:center;padding:3px 0;}
-  .hint{font-size:.73rem;color:var(--text3);}
+  .day-feriado{font-size:.62rem;color:var(--amber);text-align:center;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .hint{font-size:.73rem;color:var(--text3);line-height:1.5;}
   #main-content{display:none;}
+
+  /* Botão + (canto inferior esquerdo) */
+  .fab{position:fixed;left:1.25rem;bottom:1.25rem;bottom:calc(1.25rem + env(safe-area-inset-bottom, 0px));width:56px;height:56px;border-radius:50%;background:var(--blue);color:#07172a;border:none;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:50;-webkit-tap-highlight-color:transparent;transition:transform .15s,opacity .2s;}
+  .fab:hover{opacity:.9;}
+  .fab:active{transform:scale(.94);}
+  .fab svg{width:26px;height:26px;display:block;}
+
+  /* Popup de adicionar gasto */
+  .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);display:none;align-items:flex-start;justify-content:center;padding:12vh 1rem 1rem;z-index:100;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:1.25rem;width:100%;max-width:360px;box-shadow:0 20px 50px rgba(0,0,0,.5);}
+  .modal h3{font-size:.8rem;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem;}
+  .modal .field{margin-bottom:.85rem;}
+  .modal .field select{font-size:16px;}
+  .modal .field input.add-valor{font-size:1.5rem;text-align:right;padding:.6rem .8rem;}
+  .modal .field input.erro{border-color:var(--red);}
+  .modal-preview{font-size:.78rem;color:var(--text2);margin-bottom:1rem;min-height:1.2em;font-family:'DM Mono',monospace;line-height:1.5;}
+  .modal-preview strong{color:var(--text);font-weight:500;}
+  .modal-btns{display:flex;gap:.6rem;}
+  .modal-btns .btn-sm{flex:1;padding:.58rem;font-size:.86rem;}
+  .modal-btns .btn-apply{flex:2;width:auto;}
+  body.modal-aberto{overflow:hidden;}
+
+  .toast{position:fixed;left:50%;bottom:5.5rem;bottom:calc(5.5rem + env(safe-area-inset-bottom, 0px));-webkit-transform:translateX(-50%) translateY(15px);transform:translateX(-50%) translateY(15px);background:var(--surface2);border:1px solid rgba(93,202,145,.35);color:var(--green);padding:.55rem 1rem;border-radius:999px;font-size:.8rem;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:90;white-space:nowrap;}
+  .toast.show{opacity:1;-webkit-transform:translateX(-50%) translateY(0);transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
@@ -152,11 +181,11 @@
       </div>
       <div class="field">
         <label>Saldo recebido (R$)</label>
-        <input type="number" id="inp-saldo" placeholder="Ex: 895.47" step="0.01" min="0" />
+        <input type="text" id="inp-saldo" placeholder="Ex: 895,47" />
       </div>
       <div class="field">
         <label>Valor por dia (R$)</label>
-        <input type="number" id="inp-vrdia" value="44.00" step="0.01" min="0" />
+        <input type="text" id="inp-vrdia" value="44,00" />
       </div>
       <div class="field">
         <button class="btn-apply" onclick="aplicar()">Gerar calculadora</button>
@@ -211,10 +240,37 @@
       <div class="removed-tags" id="removed-tags"></div>
     </div>
     <div class="days-grid" id="days-grid"></div>
-    <div class="hint">ℹ️ Deixe em branco os dias que ainda não aconteceram. Toque no ✕ para remover um dia (feriado, emenda, etc).</div>
+    <div class="hint">ℹ️ Todos os dias do mês aceitam lançamento. Sábados, domingos e feriados não entram na conta dos dias úteis, mas o que você gastar neles é descontado do saldo. Toque no ✕ para remover um dia útil (emenda, folga etc.). Use o <strong>+</strong> para somar um gasto ao dia.</div>
+
+    <!-- Botão + -->
+    <button class="fab" id="fab-add" onclick="abrirAdd()" title="Adicionar gasto" aria-label="Adicionar gasto">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
   </div>
 
 </div>
+
+<!-- Popup: adicionar gasto -->
+<div class="modal-overlay" id="modal-add">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-add-title">
+    <h3 id="modal-add-title">Adicionar gasto</h3>
+    <div class="field">
+      <label for="add-dia">Dia</label>
+      <select id="add-dia"></select>
+    </div>
+    <div class="field">
+      <label for="add-valor">Valor (R$)</label>
+      <input type="text" id="add-valor" class="add-valor" placeholder="0,00" />
+    </div>
+    <div class="modal-preview" id="add-preview"></div>
+    <div class="modal-btns">
+      <button class="btn-sm" onclick="fecharAdd()">Cancelar</button>
+      <button class="btn-apply" onclick="confirmarAdd()">Adicionar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
@@ -229,8 +285,63 @@ let gdToken = null;
 let gdFileId = null;
 let saveTimer = null;
 let VR_DIA = 44, SALDO_INICIAL = 0, VR_TOTAL_IDEAL = 0;
-let diasUteisArr = [], inputs = {};
+let diasArr = [], inputs = {};
+let GRID_MES = null, GRID_ANO = null, ultimoDiaFocado = null;
 const LS_KEY = 'vr-v4';
+
+// ── Armazenamento seguro (Safari em modo privado / arquivo local pode bloquear) ──
+const store = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k,v); } catch(e){} },
+  del(k){ try { localStorage.removeItem(k); } catch(e){} }
+};
+
+// ── Máscara de valores (R$) ──
+function formatarNum(v){ // 1234.5 -> "1.234,50"
+  const p = Math.abs(v).toFixed(2).split('.');
+  return (v < 0 ? '-' : '') + p[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',' + p[1];
+}
+function lerValor(el){ // "1.234,50" -> 1234.5 | vazio -> NaN
+  if (!el) return NaN;
+  const dig = String(el.value || '').replace(/\D/g, '');
+  return dig ? parseInt(dig, 10) / 100 : NaN;
+}
+function definirValor(el, v){
+  const n = (v === null || v === undefined || v === '') ? NaN : Number(v);
+  el.value = isNaN(n) ? '' : formatarNum(Math.round(n * 100) / 100);
+}
+function interpretarColado(t){ // aceita "44,50", "44.5", "R$ 1.234,56"
+  t = String(t || '').replace(/[R$\s]/g, '');
+  if (!t) return NaN;
+  if (t.indexOf(',') >= 0) t = t.replace(/\./g, '').replace(',', '.');
+  else if (/\.\d{3}$/.test(t)) t = t.replace(/\./g, '');
+  const n = parseFloat(t);
+  return isNaN(n) ? NaN : Math.abs(Math.round(n * 100) / 100);
+}
+function cursorNoFim(el){ try { const l = el.value.length; el.setSelectionRange(l, l); } catch(e){} }
+function aplicarMascara(el){
+  el.setAttribute('inputmode', 'numeric');
+  el.setAttribute('autocomplete', 'off');
+  el.addEventListener('input', (e) => {
+    const bruto = el.value.replace(/\D/g, '');
+    const dig = bruto.replace(/^0+/, '').slice(0, 9);
+    const apagando = !!(e && e.inputType && e.inputType.indexOf('delete') === 0);
+    // Digitar "0" vira "0,00" (dia sem gasto). Apagar a partir de 0,00 limpa o campo.
+    if (!bruto || (!dig && apagando)) el.value = '';
+    else el.value = formatarNum(parseInt(dig || '0', 10) / 100);
+    cursorNoFim(el);
+  });
+  el.addEventListener('paste', (e) => {
+    const cb = e.clipboardData || window.clipboardData;
+    if (!cb) return;
+    const n = interpretarColado(cb.getData('text'));
+    if (!isNaN(n)) {
+      e.preventDefault();
+      definirValor(el, n);
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  });
+}
 
 // ── UI helpers ──
 function gdSetStatus(dot, msg, showLogin=false, showLogout=false, showRefresh=false) {
@@ -247,6 +358,13 @@ function showSave(msg, err=false) {
   clearTimeout(window._saveIndTimer);
   window._saveIndTimer = setTimeout(() => el.classList.add('hidden'), 2500);
 }
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
 
 // ── Google Identity Services ──
 function gdLogin() {
@@ -256,7 +374,7 @@ function gdLogin() {
     callback: async (resp) => {
       if (resp.error) { gdSetStatus('error', 'Erro ao autenticar.', true); return; }
       gdToken = resp.access_token;
-      localStorage.setItem('gd_token', gdToken);
+      store.set('gd_token', gdToken);
       const info = await fetchUserInfo();
       gdSetStatus('connected', `Google Drive conectado &mdash; <strong>${info}</strong>`, false, true, true);
       await carregarGDrive();
@@ -274,7 +392,7 @@ function gdRefresh() {
 function gdLogout() {
   google.accounts.oauth2.revoke(gdToken, () => {});
   gdToken = null; gdFileId = null;
-  localStorage.removeItem('gd_token');
+  store.del('gd_token');
   gdSetStatus('', 'Desconectado do Google Drive.', true, false);
 }
 
@@ -283,11 +401,11 @@ async function fetchUserInfo() {
     const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {headers:{Authorization:'Bearer '+gdToken}});
     const d = await r.json();
     return d.name || d.email || 'conectado';
-  } catch { return 'conectado'; }
+  } catch(e) { return 'conectado'; }
 }
 
 async function tryRestoreToken() {
-  const saved = localStorage.getItem('gd_token');
+  const saved = store.get('gd_token');
   if (!saved) { gdSetStatus('', 'Não conectado.', true); fallbackLocal(); return; }
   // Valida o token salvo
   try {
@@ -297,8 +415,8 @@ async function tryRestoreToken() {
     gdToken = saved;
     gdSetStatus('connected', `Google Drive conectado &mdash; <strong>${d.name||d.email||''}</strong>`, false, true, true);
     await carregarGDrive();
-  } catch {
-    localStorage.removeItem('gd_token');
+  } catch(e) {
+    store.del('gd_token');
     gdSetStatus('', 'Sessão expirada.', true);
     fallbackLocal();
   }
@@ -382,13 +500,13 @@ function agendarSalvarGD() {
 }
 
 // ── LocalStorage fallback ──
-function salvarLocal(dados) { try { localStorage.setItem(LS_KEY, JSON.stringify(dados)); } catch{} }
-function carregarLocal() { try { const r=localStorage.getItem(LS_KEY); return r?JSON.parse(r):null; } catch{return null;} }
-function fallbackLocal() { const d=carregarLocal(); if(d) restaurarEstado(d); }
+function salvarLocal(dados) { store.set(LS_KEY, JSON.stringify(dados)); }
+function carregarLocal() { try { const r = store.get(LS_KEY); return r ? JSON.parse(r) : null; } catch(e){ return null; } }
+function fallbackLocal() { const d = carregarLocal(); if (d) restaurarEstado(d); }
 
 function coletarDados() {
-  const g={};
-  diasUteisArr.forEach(i=>{ if(!i.feriado&&inputs[i.d]&&inputs[i.d].value.trim()!='') g[i.d]=inputs[i.d].value; });
+  const g = {};
+  diasArr.forEach(i => { const v = lerValor(inputs[i.d]); if (!isNaN(v)) g[i.d] = v.toFixed(2); });
   return { mes:parseInt(document.getElementById('sel-mes').value), ano:parseInt(document.getElementById('inp-ano').value), saldo:SALDO_INICIAL, vrDia:VR_DIA, gastos:g, removed:[...removedDays] };
 }
 
@@ -396,17 +514,32 @@ function coletarDados() {
 const FF={'1-1':'Confraternização Universal','4-21':'Tiradentes','5-1':'Dia do Trabalho','9-7':'Independência','10-12':'N. Sra. Aparecida','11-2':'Finados','11-15':'Proclamação da República','12-25':'Natal'};
 function pascoa(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31)-1,di=((h+l-7*m+114)%31)+1;return new Date(y,mo,di);}
 function feriadosMoveis(y){const p=pascoa(y),add=(d,n)=>{const r=new Date(d);r.setDate(r.getDate()+n);return r;},k=d=>`${d.getMonth()+1}-${d.getDate()}`;return{[k(add(p,-47))]:'Carnaval',[k(add(p,-48))]:'Carnaval',[k(add(p,-2))]:'Sexta-feira Santa',[k(p)]:'Páscoa',[k(add(p,60))]:'Corpus Christi'};}
-function getDias(ano,mes){const fm=feriadosMoveis(ano),r=[],tot=new Date(ano,mes+1,0).getDate();for(let d=1;d<=tot;d++){const dt=new Date(ano,mes,d),ds=dt.getDay();if(ds===0||ds===6)continue;const ch=`${mes+1}-${d}`,fer=FF[ch]||fm[ch]||null;r.push({d,feriado:fer,nomeSem:['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][ds]});}return r;}
+// Todos os dias do mês. util = dia de semana que não é feriado (entra na divisão do saldo)
+function getDias(ano,mes){
+  const fm=feriadosMoveis(ano),r=[],tot=new Date(ano,mes+1,0).getDate();
+  for(let d=1;d<=tot;d++){
+    const ds=new Date(ano,mes,d).getDay(),fds=(ds===0||ds===6),ch=`${mes+1}-${d}`,fer=FF[ch]||fm[ch]||null;
+    r.push({d,feriado:fer,fds,util:!fds&&!fer,nomeSem:['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][ds]});
+  }
+  return r;
+}
 
 // ── Formato ──
-const fmt=v=>'R$ '+Math.abs(v).toFixed(2).replace('.',',');
-const fmtS=v=>(v<0?'- ':'')+' R$ '+Math.abs(v).toFixed(2).replace('.',',');
+const fmt=v=>'R$ '+formatarNum(Math.abs(v));
+const fmtS=v=>(v<0?'- ':'')+' R$ '+formatarNum(Math.abs(v));
+const pad2=n=>String(n).padStart(2,'0');
 
 // ── Estado dos cards ──
 let removedDays = new Set();
 
 function getDayState(ano,mes,dia){const hoje=new Date(),dc=new Date(ano,mes,dia),hn=new Date(hoje.getFullYear(),hoje.getMonth(),hoje.getDate());if(dc.getTime()===hn.getTime())return'today';return dc<hn?'past':'future';}
-function atualizarCard(card,inp,ano,mes,dia){if(!card||!inp)return;const s=getDayState(ano,mes,dia),p=inp.value.trim()!=='';card.classList.remove('past-empty','past-filled','today');if(s==='today')card.classList.add('today');else if(s==='past')card.classList.add(p?'past-filled':'past-empty');}
+function atualizarCard(card,inp,ano,mes,dia,util){
+  if(!card||!inp)return;
+  const s=getDayState(ano,mes,dia),p=inp.value.trim()!=='';
+  card.classList.remove('past-empty','past-filled','today');
+  if(s==='today')card.classList.add('today');
+  else if(s==='past'){ if(p) card.classList.add('past-filled'); else if(util) card.classList.add('past-empty'); }
+}
 
 function removerDia(dia, mes, ano) {
   removedDays.add(dia);
@@ -433,44 +566,52 @@ function atualizarRemovedPanel(mes, ano) {
   panel.style.display = 'block';
   const diasOrdenados = [...removedDays].sort((a,b)=>a-b);
   diasOrdenados.forEach(dia => {
-    const info = diasUteisArr.find(d => d.d === dia);
+    const info = diasArr.find(d => d.d === dia);
     if (!info) return;
     const tag = document.createElement('div');
     tag.className = 'removed-tag';
     tag.title = 'Clique para restaurar';
-    tag.innerHTML = `<span class="restore-icon">↩</span> ${dia}/${(mes+1).toString().padStart(2,'0')} ${info.nomeSem}`;
+    tag.innerHTML = `<span class="restore-icon">↩</span> ${dia}/${pad2(mes+1)} ${info.nomeSem}`;
     tag.onclick = () => restaurarDia(dia, mes, ano);
     tags.appendChild(tag);
   });
 }
 
 // ── Calcular ──
+// Saldo é dividido só pelos dias úteis. Gastos em fim de semana/feriado são descontados do saldo.
 function calcular(salvar=true){
-  let totalGasto=0,diasReg=0,eco=0;
-  diasUteisArr.forEach(info=>{
-    if(info.feriado||removedDays.has(info.d))return;
+  let totalGasto=0,diasReg=0,extras=0;
+  diasArr.forEach(info=>{
+    if(removedDays.has(info.d))return;
     const inp=inputs[info.d];if(!inp)return;
-    const val=parseFloat(inp.value),el=document.getElementById(`diff-${info.d}`);
-    if(!isNaN(val)&&inp.value.trim()!=''){
-      totalGasto+=val;diasReg++;eco+=(VR_DIA-val);
-      const diff=val-VR_DIA;
-      if(el){if(diff>0.005){el.style.color='var(--red)';el.textContent='+'+Math.abs(diff).toFixed(2).replace('.',',');}
-      else if(diff<-0.005){el.style.color='var(--green)';el.textContent='-'+Math.abs(diff).toFixed(2).replace('.',',');}
-      else{el.style.color='var(--text3)';el.textContent='exato';}}
+    const val=lerValor(inp),el=document.getElementById(`diff-${info.d}`);
+    if(!isNaN(val)){
+      totalGasto+=val;
+      if(info.util){
+        diasReg++;
+        const diff=val-VR_DIA;
+        if(el){if(diff>0.005){el.style.color='var(--red)';el.textContent='+'+formatarNum(Math.abs(diff));}
+        else if(diff<-0.005){el.style.color='var(--green)';el.textContent='-'+formatarNum(Math.abs(diff));}
+        else{el.style.color='var(--text3)';el.textContent='exato';}}
+      } else {
+        extras+=val;
+        if(el){el.style.color='var(--amber)';el.textContent='extra';}
+      }
     } else if(el) el.textContent='';
   });
-  const tu=diasUteisArr.filter(d=>!d.feriado&&!removedDays.has(d.d)).length;
+  const tu=diasArr.filter(d=>d.util&&!removedDays.has(d.d)).length;
   VR_TOTAL_IDEAL=tu*VR_DIA;
   const dr=tu-diasReg,sr=SALDO_INICIAL-totalGasto,pd=dr>0?sr/dr:0,pct=tu>0?Math.min(100,Math.round((diasReg/tu)*100)):0;
   document.getElementById('m-gasto').textContent=fmt(totalGasto);
-  document.getElementById('m-gasto-sub').textContent=diasReg+' dia'+(diasReg!==1?'s':'')+' registrado'+(diasReg!==1?'s':'');
+  document.getElementById('m-gasto-sub').textContent=diasReg+(diasReg!==1?' dias úteis':' dia útil')+(extras>0.005?' · '+fmt(extras)+' extra':'');
   const elR=document.getElementById('m-restante');elR.textContent=fmt(sr);elR.className='metric-value '+(sr>=0?'ok':'danger');
   document.getElementById('m-restante-sub').textContent=dr+' dia'+(dr!==1?'s':'')+' restante'+(dr!==1?'s':'');
   const elP=document.getElementById('m-pordia');elP.textContent=dr>0?fmt(pd):'—';elP.className='metric-value '+(pd>=VR_DIA?'ok':pd>=VR_DIA*.8?'warn':'danger');
-  const bonus=(SALDO_INICIAL-VR_TOTAL_IDEAL)+eco,elB=document.getElementById('m-bonus'),elBS=document.getElementById('m-bonus-sub');
+  // Bônus = saldo restante − o que ainda precisa para os dias úteis restantes
+  const bonus=sr-dr*VR_DIA,elB=document.getElementById('m-bonus'),elBS=document.getElementById('m-bonus-sub');
   elB.textContent=fmtS(bonus);
   if(bonus>0.005){elB.className='value ok';elBS.textContent='você está acima do saldo ideal';}
-  else if(bonus<-0.005){elB.className='value danger';elBS.textContent=diasReg===0?'déficit inicial de '+fmt(Math.abs(SALDO_INICIAL-VR_TOTAL_IDEAL)):'ainda abaixo do saldo ideal';}
+  else if(bonus<-0.005){elB.className='value danger';elBS.textContent=(diasReg===0&&extras<0.005)?'déficit inicial de '+fmt(Math.abs(SALDO_INICIAL-VR_TOTAL_IDEAL)):'ainda abaixo do saldo ideal';}
   else{elB.className='value ok';elBS.textContent='saldo exatamente no ideal';}
   document.getElementById('progress-fill').style.width=pct+'%';
   document.getElementById('prog-pct').textContent=pct+'%';
@@ -478,33 +619,38 @@ function calcular(salvar=true){
   if(salvar) agendarSalvarGD();
 }
 
-// ── Construir grade ──
+// ── Construir grade (todos os dias do mês) ──
 function construirGrade(mes,ano,gastos={},removed=[]){
-  diasUteisArr=getDias(ano,mes);inputs={};
+  diasArr=getDias(ano,mes);inputs={};
+  GRID_MES=mes;GRID_ANO=ano;ultimoDiaFocado=null;
   removedDays=new Set(removed);
-  const tu=diasUteisArr.filter(d=>!d.feriado&&!removedDays.has(d.d)).length;
+  const tu=diasArr.filter(d=>d.util&&!removedDays.has(d.d)).length;
   VR_TOTAL_IDEAL=tu*VR_DIA;
   document.getElementById('m-saldo').textContent=fmt(SALDO_INICIAL);
   document.getElementById('m-saldo-sub').textContent=tu+' dias úteis no mês';
   document.getElementById('m-restante').textContent=fmt(SALDO_INICIAL);
   document.getElementById('m-restante-sub').textContent=tu+' dias restantes';
-  const pDay=SALDO_INICIAL/tu,elP=document.getElementById('m-pordia');
+  const pDay=tu>0?SALDO_INICIAL/tu:0,elP=document.getElementById('m-pordia');
   elP.textContent=fmt(pDay);elP.className='metric-value '+(pDay>=VR_DIA?'ok':pDay>=VR_DIA*.8?'warn':'danger');
   const grid=document.getElementById('days-grid');grid.innerHTML='';
-  diasUteisArr.forEach(info=>{
+  diasArr.forEach(info=>{
     const card=document.createElement('div');
-    card.className='day-card'+(info.feriado?' holiday':'');
+    card.className='day-card'+(info.feriado?' holiday':(info.fds?' weekend':''));
     card.id=`card-${info.d}`;
     if(removedDays.has(info.d)) card.style.display='none';
-    card.innerHTML=`<div class="day-header"><span class="day-num">${info.d}/${(mes+1).toString().padStart(2,'0')}</span><span class="day-sem">${info.feriado?'Feriado':info.nomeSem}</span>${!info.feriado?`<button class="btn-remove-day" title="Remover este dia" onclick="removerDia(${info.d},${mes},${ano})">✕</button>`:''}</div>${info.feriado?`<div class="day-feriado">${info.feriado}</div>`:`<input class="day-input" type="number" inputmode="decimal" min="0" step="0.01" placeholder="${VR_DIA.toFixed(2).replace('.',',')}" id="dia-${info.d}" />`}${!info.feriado?`<div class="day-diff" id="diff-${info.d}"></div>`:''}`;
+    card.innerHTML=
+      `<div class="day-header"><span class="day-num">${info.d}/${pad2(mes+1)}</span><span class="day-sem">${info.feriado?'Feriado':info.nomeSem}</span>${info.util?`<button class="btn-remove-day" title="Remover este dia" onclick="removerDia(${info.d},${mes},${ano})">✕</button>`:''}</div>`+
+      (info.feriado?`<div class="day-feriado" title="${info.feriado}">${info.feriado}</div>`:'')+
+      `<input class="day-input" type="text" placeholder="${info.util?formatarNum(VR_DIA):'0,00'}" id="dia-${info.d}" />`+
+      `<div class="day-diff" id="diff-${info.d}"></div>`;
     grid.appendChild(card);
-    if(!info.feriado){
-      const inp=card.querySelector(`#dia-${info.d}`);
-      inputs[info.d]=inp;
-      if(gastos[info.d]!==undefined) inp.value=gastos[info.d];
-      atualizarCard(card,inp,ano,mes,info.d);
-      inp.addEventListener('input',()=>{atualizarCard(card,inp,ano,mes,info.d);calcular(true);});
-    }
+    const inp=card.querySelector(`#dia-${info.d}`);
+    inputs[info.d]=inp;
+    aplicarMascara(inp);
+    if(gastos[info.d]!==undefined) definirValor(inp, parseFloat(gastos[info.d]));
+    atualizarCard(card,inp,ano,mes,info.d,info.util);
+    inp.addEventListener('focus',()=>{ultimoDiaFocado=info.d;});
+    inp.addEventListener('input',()=>{atualizarCard(card,inp,ano,mes,info.d,info.util);calcular(true);});
   });
   atualizarRemovedPanel(mes,ano);
   document.getElementById('main-content').style.display='block';
@@ -514,14 +660,14 @@ function construirGrade(mes,ano,gastos={},removed=[]){
 function restaurarEstado(e){
   document.getElementById('sel-mes').value=e.mes;
   document.getElementById('inp-ano').value=e.ano;
-  document.getElementById('inp-saldo').value=e.saldo;
-  document.getElementById('inp-vrdia').value=e.vrDia;
-  SALDO_INICIAL=e.saldo;VR_DIA=e.vrDia;
+  definirValor(document.getElementById('inp-saldo'), e.saldo);
+  definirValor(document.getElementById('inp-vrdia'), e.vrDia);
+  SALDO_INICIAL=Number(e.saldo);VR_DIA=Number(e.vrDia);
   construirGrade(e.mes,e.ano,e.gastos||{},e.removed||[]);
 }
 
 function aplicar(){
-  const mes=parseInt(document.getElementById('sel-mes').value),ano=parseInt(document.getElementById('inp-ano').value),saldo=parseFloat(document.getElementById('inp-saldo').value),vrDia=parseFloat(document.getElementById('inp-vrdia').value);
+  const mes=parseInt(document.getElementById('sel-mes').value),ano=parseInt(document.getElementById('inp-ano').value),saldo=lerValor(document.getElementById('inp-saldo')),vrDia=lerValor(document.getElementById('inp-vrdia'));
   if(isNaN(saldo)||saldo<=0){alert('Informe um saldo válido.');return;}
   if(isNaN(vrDia)||vrDia<=0){alert('Informe o valor por dia válido.');return;}
   SALDO_INICIAL=saldo;VR_DIA=vrDia;
@@ -531,7 +677,7 @@ function aplicar(){
 
 function resetarTudo(){
   if(!confirm('Limpar todos os dados e começar um novo mês?'))return;
-  localStorage.removeItem(LS_KEY);
+  store.del(LS_KEY);
   if(gdToken&&gdFileId){
     fetch(`https://www.googleapis.com/drive/v3/files/${gdFileId}`,{method:'DELETE',headers:{Authorization:'Bearer '+gdToken}}).catch(()=>{});
     gdFileId=null;
@@ -539,8 +685,81 @@ function resetarTudo(){
   document.getElementById('main-content').style.display='none';
   document.getElementById('inp-saldo').value='';
   document.getElementById('days-grid').innerHTML='';
-  diasUteisArr=[];inputs=[];
+  diasArr=[];inputs=[];
 }
+
+// ── Botão + / popup de adicionar gasto ──
+function diaPadraoAdd(disponiveis){
+  const h=new Date();
+  if(h.getMonth()===GRID_MES&&h.getFullYear()===GRID_ANO&&disponiveis.indexOf(h.getDate())>=0) return h.getDate();
+  if(ultimoDiaFocado&&disponiveis.indexOf(ultimoDiaFocado)>=0) return ultimoDiaFocado;
+  return disponiveis[0];
+}
+function abrirAdd(){
+  if(!diasArr.length) return;
+  const sel=document.getElementById('add-dia'),h=new Date(),disp=[];
+  sel.innerHTML='';
+  diasArr.forEach(i=>{
+    if(removedDays.has(i.d)) return;
+    disp.push(i.d);
+    const ehHoje=h.getDate()===i.d&&h.getMonth()===GRID_MES&&h.getFullYear()===GRID_ANO;
+    const o=document.createElement('option');
+    o.value=i.d;
+    o.textContent=`${pad2(i.d)}/${pad2(GRID_MES+1)} · ${i.feriado?'Feriado':i.nomeSem}${ehHoje?' (hoje)':''}`;
+    sel.appendChild(o);
+  });
+  if(!disp.length) return;
+  sel.value=String(diaPadraoAdd(disp));
+  const inp=document.getElementById('add-valor');
+  inp.value='';inp.classList.remove('erro');
+  atualizarPreviewAdd();
+  document.getElementById('modal-add').classList.add('open');
+  document.body.classList.add('modal-aberto');
+  inp.focus();
+}
+function fecharAdd(){
+  document.getElementById('modal-add').classList.remove('open');
+  document.body.classList.remove('modal-aberto');
+  document.getElementById('add-valor').blur();
+}
+function atualizarPreviewAdd(){
+  const d=parseInt(document.getElementById('add-dia').value);
+  const atual=lerValor(inputs[d]),v=lerValor(document.getElementById('add-valor'));
+  const base=isNaN(atual)?0:atual;
+  let html=`Lançado no dia: <strong>${fmt(base)}</strong>`;
+  if(!isNaN(v)&&v>0) html+=`<br>Novo total: <strong>${fmt(base+v)}</strong>`;
+  document.getElementById('add-preview').innerHTML=html;
+}
+function confirmarAdd(){
+  const inpV=document.getElementById('add-valor'),v=lerValor(inpV);
+  if(isNaN(v)||v<=0){inpV.classList.add('erro');inpV.focus();return;}
+  const d=parseInt(document.getElementById('add-dia').value),alvo=inputs[d];
+  if(!alvo) return;
+  const atual=lerValor(alvo),novo=(isNaN(atual)?0:atual)+v;
+  definirValor(alvo,novo);
+  const info=diasArr.find(i=>i.d===d),card=document.getElementById(`card-${d}`);
+  atualizarCard(card,alvo,GRID_ANO,GRID_MES,d,info&&info.util);
+  calcular(true);
+  fecharAdd();
+  if(card){
+    card.classList.remove('flash');void card.offsetWidth;card.classList.add('flash');
+    try{card.scrollIntoView({block:'center',behavior:'smooth'});}catch(e){card.scrollIntoView();}
+  }
+  showToast(`✓ ${fmt(v)} adicionado em ${pad2(d)}/${pad2(GRID_MES+1)}`);
+}
+document.getElementById('add-valor').addEventListener('input',()=>{document.getElementById('add-valor').classList.remove('erro');atualizarPreviewAdd();});
+document.getElementById('add-dia').addEventListener('change',atualizarPreviewAdd);
+document.getElementById('modal-add').addEventListener('click',e=>{if(e.target.id==='modal-add')fecharAdd();});
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('modal-add').classList.contains('open')) return;
+  if(e.key==='Escape'||e.key==='Esc'){fecharAdd();}
+  else if(e.key==='Enter'){e.preventDefault();confirmarAdd();}
+});
+
+// Máscara nos campos de valor da configuração e do popup
+aplicarMascara(document.getElementById('inp-saldo'));
+aplicarMascara(document.getElementById('inp-vrdia'));
+aplicarMascara(document.getElementById('add-valor'));
 
 // ── Init ──
 window.addEventListener('load', () => {
